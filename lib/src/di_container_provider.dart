@@ -1,8 +1,8 @@
 import 'package:di_container/src/di_container.dart';
 import 'package:flutter/material.dart';
 
-class DiContainerProvider extends StatefulWidget {
-  const DiContainerProvider({
+class DiProvider extends StatefulWidget {
+  const DiProvider({
     super.key,
     required this.builder,
     required this.child,
@@ -13,26 +13,23 @@ class DiContainerProvider extends StatefulWidget {
   final Widget child;
 
   @override
-  State<DiContainerProvider> createState() => _DiContainerProviderState();
+  State<DiProvider> createState() => _DiProviderState();
 }
 
-class _DiContainerProviderState extends State<DiContainerProvider> {
+class _DiProviderState extends State<DiProvider> {
   late final DiContainer _container;
 
   @override
   void initState() {
     super.initState();
-
-    final parent = context.findAncestorWidgetOfExactType<DiContainerScope>();
-
+    final parent = context.findAncestorWidgetOfExactType<DiScope>();
     if (parent != null) widget.builder.import(parent.container);
-
     _container = widget.builder.toContainer();
   }
 
   @override
   Widget build(BuildContext context) {
-    return DiContainerScope(
+    return DiScope(
       container: _container,
       child: widget.child,
     );
@@ -45,8 +42,8 @@ class _DiContainerProviderState extends State<DiContainerProvider> {
   }
 }
 
-class DiContainerScope extends InheritedWidget {
-  const DiContainerScope({
+class DiScope extends InheritedWidget {
+  const DiScope({
     super.key,
     required this.container,
     required super.child,
@@ -55,16 +52,15 @@ class DiContainerScope extends InheritedWidget {
   final DiContainer container;
 
   @override
-  bool updateShouldNotify(covariant DiContainerScope oldWidget) {
+  bool updateShouldNotify(covariant DiScope oldWidget) {
     return oldWidget.container != container;
   }
 
   static DiContainer of(BuildContext context, {bool listen = false}) {
     final scope = listen
-        ? context.dependOnInheritedWidgetOfExactType<DiContainerScope>()
-        : context
-            .getElementForInheritedWidgetOfExactType<DiContainerScope>()
-            ?.widget as DiContainerScope?;
+        ? context.dependOnInheritedWidgetOfExactType<DiScope>()
+        : context.getElementForInheritedWidgetOfExactType<DiScope>()?.widget
+            as DiScope?;
 
     if (scope == null) throw Exception('DiProvider não encontrado');
 
@@ -73,5 +69,5 @@ class DiContainerScope extends InheritedWidget {
 }
 
 extension DiProviderExp on BuildContext {
-  T read<T extends Object>() => DiContainerScope.of(this).get<T>();
+  T read<T extends Object>() => DiScope.of(this).get<T>();
 }

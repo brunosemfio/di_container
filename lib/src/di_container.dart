@@ -5,24 +5,28 @@ typedef Dispose<T> = FutureOr<void> Function(T);
 typedef Factory<T> = T Function(DiContainer i);
 
 class Wrapper<T> {
-  Wrapper._(this._factory, this._singleton, [this._onDispose]);
+  Wrapper._(
+    this._factory, {
+    required this.singleton,
+    this.onDispose,
+  });
 
   final T Function(DiContainer) _factory;
 
-  final bool _singleton;
+  final bool singleton;
 
-  final Dispose<T>? _onDispose;
+  final Dispose<T>? onDispose;
 
   T? _instance;
 
   T call(DiContainer injector) {
-    if (_singleton) return _instance ??= _factory(injector);
+    if (singleton) return _instance ??= _factory(injector);
     return _factory(injector);
   }
 
   Future<void> dispose() async {
     if (_instance != null) {
-      await _onDispose?.call(_instance as T);
+      await onDispose?.call(_instance as T);
       _instance = null;
     }
   }
@@ -64,11 +68,22 @@ class DiContainerBuilder {
   }
 
   void add<T>(Factory<T> factory, {Dispose<T>? onDispose}) {
-    _services.putIfAbsent(T, () => Wrapper<T>._(factory, true, onDispose));
+    _services.putIfAbsent(T, () {
+      return Wrapper<T>._(
+        factory,
+        singleton: true,
+        onDispose: onDispose,
+      );
+    });
   }
 
   void addFactory<T>(Factory<T> factory) {
-    _services.putIfAbsent(T, () => Wrapper<T>._(factory, false));
+    _services.putIfAbsent(T, () {
+      return Wrapper<T>._(
+        factory,
+        singleton: false,
+      );
+    });
   }
 
   DiContainer toContainer() {
