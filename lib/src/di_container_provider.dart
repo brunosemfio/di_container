@@ -1,5 +1,7 @@
-import 'package:di_container/src/di_container.dart';
 import 'package:flutter/material.dart';
+
+import 'di_container.dart';
+import 'di_container_builder.dart';
 
 class DiProvider extends StatefulWidget {
   const DiProvider({
