@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 class DiProvider extends StatefulWidget {
   const DiProvider({
     super.key,
-    required this.builder,
+    required this.container,
     required this.child,
   });
 
-  final DiContainerBuilder builder;
+  final DiContainerBuilder container;
 
   final Widget child;
 
@@ -23,8 +23,8 @@ class _DiProviderState extends State<DiProvider> {
   void initState() {
     super.initState();
     final parent = context.findAncestorWidgetOfExactType<DiScope>();
-    if (parent != null) widget.builder.import(parent.container);
-    _container = widget.builder.toContainer();
+    if (parent != null) widget.container.import(parent.container);
+    _container = widget.container.toContainer();
   }
 
   @override
