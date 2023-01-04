@@ -10,7 +10,7 @@ class DiProvider extends StatefulWidget {
     required this.child,
   });
 
-  final DiContainerBuilder container;
+  final DiContainer container;
 
   final Widget child;
 
@@ -24,9 +24,13 @@ class _DiProviderState extends State<DiProvider> {
   @override
   void initState() {
     super.initState();
+
     final parent = context.findAncestorWidgetOfExactType<DiScope>();
-    if (parent != null) widget.container.import(parent.container);
-    _container = widget.container.toContainer();
+
+    final builder = DiContainerBuilder()..addContainer(widget.container);
+    if (parent != null) builder.import(parent.container);
+
+    _container = builder.toContainer();
   }
 
   @override
