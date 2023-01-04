@@ -15,6 +15,12 @@ class DiContainerBuilder {
     });
   }
 
+  void addContainer(DiContainer container) {
+    container.services.forEach((key, value) {
+      _services.putIfAbsent(key, () => value);
+    });
+  }
+
   void add<T>(Factory<T> factory, {Dispose<T>? onDispose}) {
     _services.putIfAbsent(T, () {
       return DiWrapper<T>(factory, onDispose: onDispose);
@@ -25,10 +31,6 @@ class DiContainerBuilder {
     _services.putIfAbsent(T, () {
       return DiWrapper<T>.factory(factory);
     });
-  }
-
-  void addContainer(DiContainer container) {
-    _services.addAll(container.services);
   }
 
   DiContainer toContainer() {
