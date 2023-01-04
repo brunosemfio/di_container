@@ -27,9 +27,9 @@ class DiContainerBuilder {
     });
   }
 
-  void merge(List<DiContainerBuilder> builders) {
-    for (final builder in builders) {
-      _services.addAll(builder._services);
+  void merge(List<DiContainer> containers) {
+    for (final container in containers) {
+      _services.addAll(container.services);
     }
   }
 
