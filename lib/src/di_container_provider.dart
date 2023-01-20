@@ -24,18 +24,15 @@ class _DiProviderState extends State<DiProvider> {
   @override
   void initState() {
     super.initState();
-
-    final parent = context.findAncestorWidgetOfExactType<DiScope>();
-
+    final parent = context.findAncestorWidgetOfExactType<DiProviderScope>();
     final builder = DiContainerBuilder()..addContainer(widget.container);
     if (parent != null) builder.import(parent.container);
-
     _container = builder.toContainer();
   }
 
   @override
   Widget build(BuildContext context) {
-    return DiScope(
+    return DiProviderScope(
       container: _container,
       child: widget.child,
     );
@@ -48,8 +45,8 @@ class _DiProviderState extends State<DiProvider> {
   }
 }
 
-class DiScope extends InheritedWidget {
-  const DiScope({
+class DiProviderScope extends InheritedWidget {
+  const DiProviderScope({
     super.key,
     required this.container,
     required super.child,
@@ -58,15 +55,14 @@ class DiScope extends InheritedWidget {
   final DiContainer container;
 
   @override
-  bool updateShouldNotify(covariant DiScope oldWidget) {
+  bool updateShouldNotify(DiProviderScope oldWidget) {
     return oldWidget.container != container;
   }
 
-  static DiContainer of(BuildContext context, {bool listen = false}) {
-    final scope = listen
-        ? context.dependOnInheritedWidgetOfExactType<DiScope>()
-        : context.getElementForInheritedWidgetOfExactType<DiScope>()?.widget
-            as DiScope?;
+  static DiContainer of(BuildContext context) {
+    final scope = context
+        .getElementForInheritedWidgetOfExactType<DiProviderScope>()
+        ?.widget as DiProviderScope?;
 
     if (scope == null) throw Exception('DiProvider não encontrado');
 
@@ -75,5 +71,5 @@ class DiScope extends InheritedWidget {
 }
 
 extension DiProviderExp on BuildContext {
-  T read<T extends Object>() => DiScope.of(this).get<T>();
+  T di<T extends Object>() => DiProviderScope.of(this).get<T>();
 }
